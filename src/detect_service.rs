@@ -234,8 +234,10 @@ fn detect_file(
     
     // Use regular expressions to find sensitive information.
     for rule in ruleslist.iter() {
-        
         let results = detect_by_regex(path, rule, &contents, allowlist);
+        if results.is_empty(){
+            continue;
+        }
         for (line_number, line, matched) in results.iter() {
             let output_item = OutputItem {
                 line: line.to_string(),
@@ -282,10 +284,12 @@ fn detect_by_regex<'a>(
     rules: &Rule,
     contents: &'a str,
     allowlist: &Allowlist,
-) -> Vec<(usize, &'a str, &'a str)> {
+) -> Vec<(usize, &'a str, &'a str,
+// Option<&'a str>
+)> {
     // Create a regular expression object.
     let regex = Regex::new(&rules.regex).unwrap();
-
+    
     // Iterate over the lines in the string.
     let  results: Vec<(usize, &str, &str)> = contents
         .lines()
@@ -298,7 +302,9 @@ fn detect_by_regex<'a>(
                 .map(|matched| (i + 1, line, matched.as_str()))
         })
         .collect();
-    
+    if results.is_empty(){
+        return Vec::new();
+    }
     // The secrets that should be skipped
     let mut filtered_results: Vec<(usize, &str, &str)> = Vec::new();
    // Handle global allowlist
@@ -348,7 +354,13 @@ fn detect_by_regex<'a>(
             }
         }
     }
-    remove_duplicates(results, filtered_results)
+    
+    if filtered_results.is_empty(){
+        results
+    }else {
+        remove_duplicates(results, filtered_results)
+    }
+    
 }
 
 

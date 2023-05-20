@@ -420,6 +420,29 @@ pub fn remove_duplicates<T: Eq + std::hash::Hash + Clone>(array1: Vec<T>, array2
     let set: HashSet<_> = array2.into_iter().collect();
     array1.into_iter().filter(|x| !set.contains(x)).collect()
 }
+// pub fn merge_tuples<'a>(tuples: &mut Vec<(usize, &'a str, &'a str)>) {
+//     let mut merged_tuples: Vec<(usize, &'a str, &'a str)> = Vec::new();
+//     let mut visited_indices: Vec<usize> = Vec::new();
+
+//     for (i, tuple) in tuples.iter().enumerate() {
+//         if visited_indices.contains(&i) {
+//             continue;
+//         }
+
+//         let mut merged_tuple = tuple.clone();
+//         for j in (i + 1)..tuples.len() {
+//             if tuple == &tuples[j] {
+//                 visited_indices.push(j);
+//                 merged_tuple.1 = tuple.1;
+//                 merged_tuple.2 = tuple.2;
+//             }
+//         }
+
+//         merged_tuples.push(merged_tuple);
+//     }
+
+//     *tuples = merged_tuples;
+// }
 
 #[cfg(test)]
 mod tests {
@@ -775,9 +798,9 @@ mod tests {
     #[test]
     fn test_remove_duplicates() {
         // Test case 1
-        let array1 = vec![1, 2, 3, 4, 5];
+        let array1 = vec![1,1, 2, 3, 4, 5];
         let array2 = vec![3, 4, 5, 6, 7];
         let result = remove_duplicates(array1, array2);
-        assert_eq!(result, vec![1, 2]);
+        assert_eq!(result, vec![1,1, 2]);
     }
 }
